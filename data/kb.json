@@ -1,0 +1,28 @@
+{
+  "articles": [
+    {
+      "id": "kb-billing-invoices",
+      "title": "Billing: duplicate TraceLight invoices",
+      "tags": ["billing", "invoice", "charge", "refund"],
+      "body": "TraceLight invoices are issued on the first business day of the month. If a workspace shows two charges for the same month, open Billing, compare the charge ids, and keep the invoice number that starts with INV. Duplicate charges are credited within 30 days. AlertMesh Starter does not include invoice credits; Business and Enterprise plans do."
+    },
+    {
+      "id": "kb-password-reset",
+      "title": "Password reset and sign-in help",
+      "tags": ["password", "login", "mfa", "sign-in"],
+      "body": "From the TraceLight or AlertMesh login page, choose Forgot password. The reset link expires in 30 minutes and only works once. If the reset email never arrives, check spam and confirm the workspace email on file. Lost MFA devices on Business and Enterprise plans can be cleared by a workspace admin under Admin, Members. Starter plans must use the reset link."
+    },
+    {
+      "id": "kb-escalate-human",
+      "title": "Escalate to a human on the ops queue",
+      "tags": ["escalation", "human", "outage", "ops"],
+      "body": "Escalate a TraceLight or AlertMesh ticket to a human when the customer asks for a person, reports a workspace outage, or mentions legal review. Mark the ticket escalated and notify the ops queue. Do not promise a resolution time. The on-call ops queue follows up with the workspace admin."
+    },
+    {
+      "id": "kb-general-support",
+      "title": "General Vision AI Ops support",
+      "tags": ["support", "tracelight", "alertmesh"],
+      "body": "Vision AI Ops support covers TraceLight and AlertMesh how-to questions. Ask which workspace they mean and what they already tried, then wait for their reply before closing the ticket."
+    }
+  ]
+}

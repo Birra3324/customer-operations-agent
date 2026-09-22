@@ -1,0 +1,35 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8789:8789"
+    environment:
+      APP_ENV: production
+      API_KEY: ${API_KEY:?Set API_KEY in the environment or a .env file}
+      DATABASE_URL: sqlite:////var/lib/ops/ops.db
+      FIXTURES_DIR: data
+      AI_PROVIDER: ${AI_PROVIDER:-heuristic}
+      OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-llama3.2}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-}
+      SIMULATE_FLAKY_TOOL: ${SIMULATE_FLAKY_TOOL:-false}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    volumes:
+      - ops_sqlite:/var/lib/ops
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8789/health')",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  ops_sqlite:
