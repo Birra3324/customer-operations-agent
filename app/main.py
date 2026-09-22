@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app import __version__
-from app.api.routes import agent, health, runs, tickets
+from app.api.routes import agent, handoff, health, n8n, runs, tickets
 from app.core.config import get_settings
 from app.core.errors import register_exception_handlers
 from app.core.logging import RequestIdMiddleware, setup_logging
@@ -30,16 +30,20 @@ def create_app() -> FastAPI:
         version=__version__,
         description=(
             "Customer operations agent: classify a support ticket, call mock tools, "
-            "and store the plan, tool trace, and reply."
+            "store the plan and tool trace, and hand escalated tickets to a person. "
+            "An n8n workflow can post the same ticket contract."
         ),
         lifespan=lifespan,
     )
     application.add_middleware(RequestIdMiddleware)
     register_exception_handlers(application)
     application.include_router(health.router)
+    application.include_router(handoff.page_router)
     application.include_router(tickets.router)
     application.include_router(runs.router)
     application.include_router(agent.router)
+    application.include_router(handoff.router)
+    application.include_router(n8n.router)
     return application
 
 

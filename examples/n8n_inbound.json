@@ -1,0 +1,9 @@
+{
+  "event": "ticket.created",
+  "subject": "Need a human — TraceLight workspace is down",
+  "body": "Our whole team is locked out and this looks like an outage. Please escalate to a person on the ops queue.",
+  "customer_id": "cust-3301",
+  "channel": "portal",
+  "external_id": "demo-n8n-kite-outage",
+  "workflow": "vision-ops-ticket-bridge"
+}

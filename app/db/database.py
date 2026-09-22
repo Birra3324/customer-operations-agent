@@ -78,12 +78,36 @@ def _ensure_sqlite_parent(url: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
 
 
+def ensure_ticket_handoff_columns(engine: Engine) -> None:
+    """Add Day 22 columns on an existing SQLite file. create_all does not ALTER."""
+    with engine.begin() as conn:
+        tables = {
+            row[0]
+            for row in conn.execute(text("SELECT name FROM sqlite_master WHERE type='table'"))
+        }
+        if "tickets" not in tables:
+            return
+        existing = {row[1] for row in conn.execute(text("PRAGMA table_info(tickets)"))}
+        additions = {
+            "assignee": "VARCHAR(64)",
+            "handoff_note": "TEXT",
+            "handoff_at": "DATETIME",
+        }
+        for name, ddl in additions.items():
+            if name not in existing:
+                conn.execute(text(f"ALTER TABLE tickets ADD COLUMN {name} {ddl}"))
+
+
 def init_db() -> None:
     """create_all for the local demo. See docs/architecture.md (no Alembic)."""
     from app.models import entities as _entities  # noqa: F401
 
-    _ensure_sqlite_parent(get_settings().database_url)
-    Base.metadata.create_all(bind=get_engine())
+    settings = get_settings()
+    _ensure_sqlite_parent(settings.database_url)
+    engine = get_engine()
+    Base.metadata.create_all(bind=engine)
+    if settings.is_sqlite:
+        ensure_ticket_handoff_columns(engine)
 
 
 def get_db() -> Generator[Session, None, None]:
