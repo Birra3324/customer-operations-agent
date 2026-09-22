@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Human handoff — Vision AI Ops</title>
+  <style>
+    :root {
+      --bg: #efe7dc;
+      --ink: #1c1916;
+      --muted: #5e564c;
+      --line: #ddcfc0;
+      --panel: #fffdf9;
+      --accent: #0e5f57;
+      --accent-ink: #f4fffd;
+      --urgent: #8d3418;
+      --escalated: #7a2430;
+      --resolved: #1d5c38;
+      --progress: #8a5a12;
+      --shadow: 0 1px 0 rgba(28, 25, 22, 0.04);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 400px at 10% -10%, #f7f1e8 0%, transparent 50%),
+        var(--bg);
+      font: 15px/1.45 "Segoe UI", system-ui, sans-serif;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: flex-end;
+      padding: 22px 28px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    h1 { font-size: 22px; font-weight: 650; margin: 0 0 4px; letter-spacing: -0.02em; }
+    h2 { font-size: 15px; margin: 0 0 10px; }
+    p { margin: 0; }
+    .lede { color: var(--muted); max-width: 46rem; }
+    .keybar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: end;
+      padding: 14px 28px;
+      background: rgba(255, 253, 249, 0.72);
+      border-bottom: 1px solid var(--line);
+    }
+    label { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+    input, select, textarea, button { font: inherit; color: inherit; }
+    input[type="password"], select, textarea {
+      background: white;
+      border: 1px solid #c9b8a6;
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    input[type="password"] { min-width: 280px; }
+    textarea { width: 100%; min-height: 68px; resize: vertical; }
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 12px;
+      background: var(--accent);
+      color: var(--accent-ink);
+      cursor: pointer;
+    }
+    button.secondary { background: transparent; color: var(--ink); border: 1px solid #c9b8a6; }
+    button:disabled { opacity: 0.55; cursor: wait; }
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 16px;
+      padding: 16px 28px 28px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      min-height: 420px;
+    }
+    .panel h2, .queue-head, .detail { padding: 14px 14px 0; }
+    .queue-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    #queue { display: grid; gap: 8px; padding: 12px; }
+    .ticket {
+      text-align: left;
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      display: grid;
+      gap: 4px;
+    }
+    .ticket.active { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+    .ticket strong { font-weight: 650; }
+    .meta { color: var(--muted); font-size: 12px; }
+    .chip {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 1px 8px;
+      font-size: 12px;
+      background: #f3ebe3;
+    }
+    .chip.escalated, .chip.urgent { background: #fde8e4; color: var(--escalated); }
+    .chip.resolved { background: #e5f6ec; color: var(--resolved); }
+    .chip.in_progress, .chip.high { background: #fff1d6; color: var(--progress); }
+    .detail { padding-bottom: 16px; }
+    .facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
+    .reply, pre, .empty {
+      background: #f7f3ed;
+      border-radius: 8px;
+      padding: 10px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    pre { overflow: auto; max-height: 180px; margin: 6px 0 0; font-size: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; vertical-align: top; border-top: 1px solid var(--line); padding: 8px 4px; }
+    .actions { display: grid; gap: 8px; margin-top: 12px; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+    #error { color: var(--urgent); min-height: 1.2em; padding: 0 28px; }
+    .check { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink); }
+    @media (max-width: 860px) {
+      header, .layout { display: block; }
+      .layout { padding: 12px; }
+      .panel { margin-top: 12px; min-height: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Human handoff</h1>
+      <p class="lede">Vision AI Ops desk. Read ticket status and the tool trace, then escalate or assign a queue. The planner is not called again.</p>
+    </div>
+    <p class="lede">Local demo on port 8789. Fictional tickets only.</p>
+  </header>
+  <form class="keybar" id="key-form">
+    <label>API key from .env
+      <input id="api-key" type="password" autocomplete="off" placeholder="Paste API_KEY">
+    </label>
+    <button type="submit" id="load">Load queue</button>
+    <label class="check"><input id="escalated-only" type="checkbox"> Escalated only</label>
+  </form>
+  <p id="error" role="status"></p>
+  <main class="layout">
+    <section class="panel" aria-label="Ticket queue">
+      <div class="queue-head">
+        <h2>Queue</h2>
+        <span id="count" class="meta"></span>
+      </div>
+      <div id="queue"></div>
+    </section>
+    <section class="panel" aria-label="Ticket detail">
+      <div class="detail" id="detail">
+        <p class="empty">Load the queue, then choose a ticket. You will see status, the latest tool trace, and handoff actions.</p>
+      </div>
+    </section>
+  </main>
+  <script>
+    const storageKey = "ops_api_key";
+    const keyInput = document.querySelector("#api-key");
+    const errorBox = document.querySelector("#error");
+    const queueEl = document.querySelector("#queue");
+    const detailEl = document.querySelector("#detail");
+    const countEl = document.querySelector("#count");
+    const escalatedOnly = document.querySelector("#escalated-only");
+    let selectedId = null;
+
+    keyInput.value = sessionStorage.getItem(storageKey) || "";
+
+    function key() {
+      return keyInput.value.trim();
+    }
+
+    function setError(message) {
+      errorBox.textContent = message || "";
+    }
+
+    async function api(path, options) {
+      if (!key()) {
+        throw new Error("Enter the API key from your .env file.");
+      }
+      const headers = Object.assign({ "X-API-Key": key() }, (options && options.headers) || {});
+      const response = await fetch(path, Object.assign({}, options || {}, { headers: headers }));
+      const text = await response.text();
+      let body = null;
+      if (text) {
+        try { body = JSON.parse(text); } catch (err) { body = { error: text }; }
+      }
+      if (!response.ok) {
+        const message = body && body.error ? body.error : response.statusText;
+        throw new Error(typeof message === "string" ? message : "Request failed");
+      }
+      return body;
+    }
+
+    function chip(text, kind) {
+      const span = document.createElement("span");
+      span.className = "chip" + (kind ? " " + kind : "");
+      span.textContent = text;
+      return span;
+    }
+
+    function renderQueue(tickets) {
+      queueEl.replaceChildren();
+      countEl.textContent = tickets.length + (tickets.length === 1 ? " ticket" : " tickets");
+      if (!tickets.length) {
+        const empty = document.createElement("p");
+        empty.className = "empty";
+        empty.textContent = "No tickets in this view. Post one with scripts/post_demo.py or the n8n bridge.";
+        queueEl.append(empty);
+        return;
+      }
+      tickets.forEach(function (ticket) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.id = ticket.id;
+        button.className = "ticket" + (ticket.id === selectedId ? " active" : "");
+        const title = document.createElement("strong");
+        title.textContent = ticket.subject;
+        const meta = document.createElement("span");
+        meta.className = "meta";
+        meta.textContent = (ticket.assignee || "unassigned") + " · " + (ticket.tool_names.join(", ") || "no tools yet");
+        const facts = document.createElement("span");
+        facts.append(chip(ticket.status, ticket.status));
+        if (ticket.priority) facts.append(document.createTextNode(" "));
+        if (ticket.priority) facts.append(chip(ticket.priority, ticket.priority));
+        button.append(title, facts, meta);
+        button.addEventListener("click", function () { selectTicket(ticket.id); });
+        queueEl.append(button);
+      });
+    }
+
+    function addFact(parent, label, value) {
+      parent.append(chip(label + ": " + (value || "—")));
+    }
+
+    function renderDetail(payload) {
+      const ticket = payload.ticket;
+      const run = payload.run;
+      detailEl.replaceChildren();
+      const wrap = document.createElement("div");
+      const heading = document.createElement("h2");
+      heading.textContent = ticket.subject;
+      const facts = document.createElement("div");
+      facts.className = "facts";
+      addFact(facts, "status", ticket.status);
+      addFact(facts, "intent", ticket.intent);
+      addFact(facts, "priority", ticket.priority);
+      addFact(facts, "assignee", ticket.assignee);
+      addFact(facts, "channel", ticket.channel);
+      if (run) addFact(facts, "provider", run.provider);
+      wrap.append(heading, facts);
+      if (ticket.handoff_note) {
+        const noteLine = document.createElement("p");
+        noteLine.className = "meta";
+        noteLine.textContent = "Queue note: " + ticket.handoff_note;
+        wrap.append(noteLine);
+      }
+
+      const replyLabel = document.createElement("h2");
+      replyLabel.textContent = "Latest reply";
+      const reply = document.createElement("p");
+      reply.className = "reply";
+      reply.textContent = run && run.final_reply ? run.final_reply : "No agent reply stored.";
+      wrap.append(replyLabel, reply);
+
+      const traceLabel = document.createElement("h2");
+      traceLabel.textContent = "Tool trace";
+      wrap.append(traceLabel);
+      const calls = run && run.tool_calls ? run.tool_calls : [];
+      if (!calls.length) {
+        const none = document.createElement("p");
+        none.className = "empty";
+        none.textContent = "This ticket has no tool calls.";
+        wrap.append(none);
+      } else {
+        const table = document.createElement("table");
+        const head = document.createElement("tr");
+        ["Tool", "OK", "Attempts", "Result"].forEach(function (label) {
+          const th = document.createElement("th");
+          th.textContent = label;
+          head.append(th);
+        });
+        table.append(head);
+        calls.forEach(function (call) {
+          const row = document.createElement("tr");
+          [call.tool, String(call.ok), String(call.attempts)].forEach(function (value) {
+            const cell = document.createElement("td");
+            cell.textContent = value;
+            row.append(cell);
+          });
+          const resultCell = document.createElement("td");
+          const pre = document.createElement("pre");
+          pre.textContent = JSON.stringify(call.result || { error: call.error }, null, 2);
+          resultCell.append(pre);
+          row.append(resultCell);
+          table.append(row);
+        });
+        wrap.append(table);
+      }
+
+      const eventsLabel = document.createElement("h2");
+      eventsLabel.textContent = "n8n status";
+      wrap.append(eventsLabel);
+      const events = payload.n8n_events || [];
+      if (!events.length) {
+        const none = document.createElement("p");
+        none.className = "meta";
+        none.textContent = "No n8n status posted for this ticket.";
+        wrap.append(none);
+      } else {
+        events.forEach(function (event) {
+          const line = document.createElement("p");
+          line.className = "meta";
+          line.textContent = event.workflow + " · " + event.event + " · " + event.status + (event.note ? " · " + event.note : "");
+          wrap.append(line);
+        });
+      }
+
+      const actions = document.createElement("form");
+      actions.className = "actions";
+      const noteLabel = document.createElement("label");
+      noteLabel.textContent = "Note for the queue";
+      const note = document.createElement("textarea");
+      note.id = "note";
+      note.maxLength = 500;
+      note.placeholder = "Optional. Stored on the ticket. Not written to the server log.";
+      noteLabel.append(note);
+      const row = document.createElement("div");
+      row.className = "row";
+      const assigneeLabel = document.createElement("label");
+      assigneeLabel.textContent = "Queue";
+      const assignee = document.createElement("select");
+      assignee.id = "assignee";
+      ["ops-queue", "billing-desk", "access-desk"].forEach(function (name) {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        if (ticket.assignee === name) option.selected = true;
+        assignee.append(option);
+      });
+      assigneeLabel.append(assignee);
+      const escalate = document.createElement("button");
+      escalate.type = "button";
+      escalate.textContent = "Escalate to human";
+      const assign = document.createElement("button");
+      assign.type = "button";
+      assign.className = "secondary";
+      assign.textContent = "Assign";
+      const resolve = document.createElement("button");
+      resolve.type = "button";
+      resolve.className = "secondary";
+      resolve.textContent = "Mark resolved";
+      escalate.addEventListener("click", function () { sendAction("escalate", escalate); });
+      assign.addEventListener("click", function () { sendAction("assign", assign); });
+      resolve.addEventListener("click", function () { sendAction("resolve", resolve); });
+      row.append(assigneeLabel, escalate, assign, resolve);
+      actions.append(noteLabel, row);
+      wrap.append(actions);
+      detailEl.append(wrap);
+
+      async function sendAction(action, button) {
+        button.disabled = true;
+        setError("");
+        try {
+          await api("/api/v1/handoff/tickets/" + ticket.id, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              action: action,
+              assignee: assignee.value,
+              note: note.value
+            })
+          });
+          await loadQueue();
+          await selectTicket(ticket.id);
+        } catch (err) {
+          setError(err.message);
+          button.disabled = false;
+        }
+      }
+    }
+
+    function markSelected() {
+      document.querySelectorAll(".ticket").forEach(function (node) {
+        node.classList.toggle("active", node.dataset.id === selectedId);
+      });
+    }
+
+    async function selectTicket(id) {
+      selectedId = id;
+      markSelected();
+      const payload = await api("/api/v1/handoff/tickets/" + id);
+      renderDetail(payload);
+      markSelected();
+    }
+
+    async function loadQueue() {
+      setError("");
+      sessionStorage.setItem(storageKey, key());
+      const path = escalatedOnly.checked ? "/api/v1/handoff/queue?status=escalated" : "/api/v1/handoff/queue";
+      const body = await api(path);
+      renderQueue(body.tickets);
+      if (selectedId && body.tickets.some(function (ticket) { return ticket.id === selectedId; })) {
+        await selectTicket(selectedId);
+      } else if (body.tickets.length) {
+        await selectTicket(body.tickets[0].id);
+      } else {
+        selectedId = null;
+        detailEl.replaceChildren();
+        const empty = document.createElement("p");
+        empty.className = "empty";
+        empty.textContent = "Nothing to show in this filter.";
+        detailEl.append(empty);
+      }
+    }
+
+    document.querySelector("#key-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      loadQueue().catch(function (err) { setError(err.message); });
+    });
+    escalatedOnly.addEventListener("change", function () {
+      if (!key()) return;
+      loadQueue().catch(function (err) { setError(err.message); });
+    });
+  </script>
+</body>
+</html>

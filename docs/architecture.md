@@ -98,3 +98,23 @@ JSON columns on `agent_runs` store `plan` and `tool_calls`.
 `X-API-Key` on every `/api/v1/*` route, compared with `secrets.compare_digest`. Missing configuration is HTTP 503. A wrong key is HTTP 401. `GET /health` does not check the key. Startup raises if `API_KEY` is blank, so a half-configured process does not serve mutating routes.
 
 Health reports the provider. It pings Ollama only when `AI_PROVIDER=ollama`, so the heuristic default does not touch the network.
+
+## Human handoff
+
+`GET /handoff` is a static page. The browser sends `X-API-Key` from a password field to:
+
+- `GET /api/v1/handoff/queue`
+- `GET /api/v1/handoff/tickets/{id}`
+- `POST /api/v1/handoff/tickets/{id}`
+
+Escalate, assign, and resolve update the ticket row only. They do not call the planner, so the stored tool trace stays the one from the last agent run. Assignee values are the three queue names in `app/models/schemas.py`. Notes are on the ticket response and are left out of the log line (`handoff_updated` records action, assignee, and status).
+
+SQLite files created before these columns exist get `assignee`, `handoff_note`, and `handoff_at` from `ensure_ticket_handoff_columns` during `init_db`. New databases get the columns from `create_all`. There is still no Alembic migration.
+
+## n8n bridge
+
+The workflow in `n8n/vision-ops-ticket-bridge.json` is inactive until someone turns it on. Webhook, then `POST /api/v1/integrations/n8n/inbound`, then `POST /api/v1/integrations/n8n/status`.
+
+Inbound uses the same `add_ticket` and `run_agent` path as `POST /api/v1/tickets`. When `external_id` is set, a `dedupe_key` of `n8n:ticket.created:{external_id}` makes a second delivery return the original run. Status events are extra rows on `integration_events` and do not change the ticket. The API key stays in the n8n environment (`OPS_AGENT_API_KEY`), which this process does not read.
+
+The only outbound HTTP from tools is still the Slack webhook, and only when `SLACK_WEBHOOK_URL` is set. The n8n nodes call this API; this API does not call n8n.

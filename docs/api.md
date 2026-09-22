@@ -47,6 +47,9 @@ Response (`ticket` + `run`):
 | Field | Meaning |
 | --- | --- |
 | `ticket.status` | `open` before the agent, then whatever `update_ticket` wrote |
+| `ticket.assignee` | Human queue after a handoff action, otherwise null |
+| `ticket.handoff_note` | Optional note from the handoff page. Not written to server logs |
+| `ticket.handoff_at` | When a person last escalated, assigned, or resolved the ticket |
 | `run.plan` | Planner thoughts and executor result lines, in order |
 | `run.tool_calls` | `{tool, arguments, ok, attempts, result, error}` |
 | `run.final_reply` | Customer-facing text |
@@ -56,7 +59,7 @@ Response (`ticket` + `run`):
 | `run.fallback` | `heuristic` when a remote planner failed and the offline planner finished the run |
 | `run.status` | `completed`, or `needs_review` when max tool rounds stopped the loop |
 
-A captured offline body is in [examples/sample_responses.json](../examples/sample_responses.json).
+A captured offline body is in [examples/sample_responses.json](../examples/sample_responses.json). That file was saved before handoff fields existed. Live ticket objects also include `assignee`, `handoff_note`, and `handoff_at`.
 
 ## GET /api/v1/tickets
 
@@ -79,3 +82,67 @@ The full plan and tool trace. HTTP 404 when the id is unknown.
 Either a new ticket (`subject` and `body`, optional `customer_id` and `channel`) or `{"ticket_id": "..."}` to run again. HTTP 200 and an `AgentRun` body. Unknown `ticket_id` is HTTP 404.
 
 Interactive docs: [http://127.0.0.1:8789/docs](http://127.0.0.1:8789/docs) while the server is running.
+
+The handoff page is [http://127.0.0.1:8789/handoff](http://127.0.0.1:8789/handoff). It is public HTML. The JSON routes below use `X-API-Key`.
+
+## GET /api/v1/handoff/queue
+
+Newest first. Query `limit` from 1 to 50 (default 20) and optional `status` (`open`, `in_progress`, `waiting_customer`, `resolved`, `escalated`).
+
+Each item includes `tool_names` from the latest run, plus `assignee` and `handoff_note`.
+
+## GET /api/v1/handoff/tickets/{id}
+
+Ticket, latest run (full tool trace), and up to 10 n8n events for that ticket. HTTP 404 when the id is unknown.
+
+## POST /api/v1/handoff/tickets/{id}
+
+Does not call the planner.
+
+```json
+{"action": "escalate", "assignee": "ops-queue", "note": "Needs a person on the ops queue"}
+```
+
+| `action` | Effect |
+| --- | --- |
+| `escalate` | Status `escalated`. Assignee defaults to `ops-queue` |
+| `assign` | Sets assignee. Status stays `escalated` if it already is; otherwise it becomes `in_progress` |
+| `resolve` | Status `resolved`. Assignee changes only when you send one |
+
+`assignee` is `ops-queue`, `billing-desk`, or `access-desk`. `assign` without an assignee is HTTP 422. Unknown ticket is HTTP 404.
+
+## POST /api/v1/integrations/n8n/inbound
+
+Body the n8n workflow sends after its webhook. HTTP 201, or HTTP 200 when `external_id` was already accepted.
+
+```json
+{
+  "event": "ticket.created",
+  "subject": "Need a human — TraceLight workspace is down",
+  "body": "Our whole team is locked out and this looks like an outage.",
+  "customer_id": "cust-3301",
+  "channel": "portal",
+  "external_id": "demo-n8n-kite-outage",
+  "workflow": "vision-ops-ticket-bridge"
+}
+```
+
+`event` must be `ticket.created`. `external_id` is letters, digits, and `_. :-` only. The response includes `accepted`, `idempotent`, `ticket`, and `run`. A repeat with the same `external_id` does not start a second run.
+
+## POST /api/v1/integrations/n8n/status
+
+```json
+{
+  "ticket_id": "TICKET_ID",
+  "workflow": "vision-ops-ticket-bridge",
+  "status": "posted",
+  "external_id": "demo-n8n-kite-outage",
+  "note": "n8n bridge posted agent status"
+}
+```
+
+`status` is `posted`, `failed`, or `skipped`. HTTP 201 with the event row. Unknown `ticket_id` is HTTP 404. This does not change `ticket.status`.
+
+## GET /api/v1/integrations/n8n/events
+
+Newest first. Query `limit` from 1 to 50 (default 20). Rows are ids, workflow name, status, and the short note. They do not copy the ticket body.

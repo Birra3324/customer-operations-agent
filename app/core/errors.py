@@ -14,6 +14,19 @@ from app.core.logging import get_request_id
 log = logging.getLogger("ops.errors")
 
 
+def _json_safe(value: object) -> object:
+    """Pydantic may put a ValueError on validation ctx. Responses stay JSON."""
+    if isinstance(value, BaseException):
+        return str(value)
+    if isinstance(value, dict):
+        return {str(key): _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return value
+    return str(value)
+
+
 def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(StarletteHTTPException)
     async def http_exc(request: Request, exc: StarletteHTTPException) -> JSONResponse:
@@ -31,7 +44,7 @@ def register_exception_handlers(app: FastAPI) -> None:
         log.info("validation_failed")
         return JSONResponse(
             status_code=422,
-            content={"error": "Validation failed", "details": exc.errors(), "request_id": rid},
+            content={"error": "Validation failed", "details": _json_safe(exc.errors()), "request_id": rid},
         )
 
     @app.exception_handler(Exception)

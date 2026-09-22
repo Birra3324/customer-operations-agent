@@ -10,9 +10,9 @@ Built as a local portfolio demo. The default planner is a deterministic heuristi
 
 Sample tickets are fictional **Vision AI Ops** requests (TraceLight / AlertMesh), the same made-up company as the company RAG demo. There is no real customer data in git.
 
-**How to demo:** [5–10 minute walkthrough](docs/demo.md) — venv, uvicorn on `:8789`, post the three [example tickets](examples/demo_requests.json), then `GET /health` and `GET /api/v1/runs/{id}`.
+**How to demo:** [10–15 minute walkthrough](docs/demo.md) — venv, uvicorn on `:8789`, post the three [example tickets](examples/demo_requests.json), open the [handoff page](http://127.0.0.1:8789/handoff), then the [n8n bridge](docs/n8n.md). Screenshots: [docs/screenshots](docs/screenshots/).
 
-**Status (Days 19–21):** [checklist](docs/status.md). Days 22–25 (handoff UI, n8n, screenshots, extended walkthrough) are listed there as next and are not in this repo yet.
+**Status (Days 19–25):** [checklist](docs/status.md). Days 26–30 are listed there as next.
 
 This is not a UiPath, Workato, MuleSoft, or ServiceNow project.
 
@@ -35,11 +35,13 @@ flowchart LR
   Slack --> Planner
   Planner --> Reply["Final reply + run record"]
   Reply --> DB
+  Desk["Handoff page /handoff"] --> API
+  N8n["n8n webhook workflow"] --> API
 ```
 
 The planner and the executor are separate roles. Each round the planner emits a thought plus either a tool call or a final reply. The executor runs only registry tools, appends the result, and hands control back. That trace is what `GET /api/v1/runs/{id}` returns.
 
-Direct `POST /api/v1/tickets` creates the row and runs the agent. `POST /api/v1/agent/run` does the same for a new ticket, or runs again on an existing `ticket_id`.
+Direct `POST /api/v1/tickets` creates the row and runs the agent. `POST /api/v1/agent/run` does the same for a new ticket, or runs again on an existing `ticket_id`. The handoff page reads that stored trace and can escalate or assign a queue without starting another run. The n8n workflow posts to the same API.
 
 Details, including the flaky-tool retry: [docs/architecture.md](docs/architecture.md).
 
@@ -107,6 +109,8 @@ See `.env.example`.
 | `MAX_TOOL_ROUNDS` | Planner/executor cap (default 6). |
 | `SIMULATE_FLAKY_TOOL` | When `true`, `lookup_kb` fails once per run and the executor retries with backoff. |
 | `ALLOWED_TOOLS` | Comma-separated allowlist. Names outside the registry never run. |
+| `OPS_AGENT_URL` | Used by n8n, not by this process. Default `http://127.0.0.1:8789`. |
+| `OPS_AGENT_API_KEY` | Used by n8n, not by this process. Set it to the same value as `API_KEY` in the n8n environment. Leave it blank in git. |
 
 ## API
 
@@ -118,6 +122,13 @@ See `.env.example`.
 | GET | `/api/v1/tickets/{id}` | `X-API-Key` |
 | GET | `/api/v1/runs/{id}` | `X-API-Key` |
 | POST | `/api/v1/agent/run` | `X-API-Key` — new ticket, or rerun by `ticket_id` |
+| GET | `/handoff` | public HTML. The page sends `X-API-Key` from a password field |
+| GET | `/api/v1/handoff/queue` | `X-API-Key` — status, assignee, tool names |
+| GET | `/api/v1/handoff/tickets/{id}` | `X-API-Key` — ticket, tool trace, n8n events |
+| POST | `/api/v1/handoff/tickets/{id}` | `X-API-Key` — `escalate`, `assign`, or `resolve` |
+| POST | `/api/v1/integrations/n8n/inbound` | `X-API-Key` — ticket event from the n8n workflow |
+| POST | `/api/v1/integrations/n8n/status` | `X-API-Key` — workflow status callback |
+| GET | `/api/v1/integrations/n8n/events` | `X-API-Key` |
 
 Shapes: [docs/api.md](docs/api.md). A full offline example body is in [examples/sample_responses.json](examples/sample_responses.json).
 
@@ -170,9 +181,35 @@ Three fictional tickets live in [examples/demo_requests.json](examples/demo_requ
 
 Expectations for those three are in [evals/scenarios.json](evals/scenarios.json).
 
+## Handoff and n8n
+
+With the API running, open [http://127.0.0.1:8789/handoff](http://127.0.0.1:8789/handoff), paste `API_KEY`, and load the queue. You can escalate, assign `ops-queue`, `billing-desk`, or `access-desk`, or mark a ticket resolved. That does not call the planner again.
+
+The n8n workflow is [n8n/vision-ops-ticket-bridge.json](n8n/vision-ops-ticket-bridge.json). Import notes and the no-n8n curl path are in [docs/n8n.md](docs/n8n.md).
+
+```bash
+API_KEY="$API_KEY" python scripts/post_n8n_demo.py
+```
+
+## Screenshots
+
+Captured from a local heuristic run. How to regenerate: [docs/screenshots/README.md](docs/screenshots/README.md).
+
+![Health check](docs/screenshots/health.png)
+
+![Ticket create](docs/screenshots/ticket-create.png)
+
+![Tool trace](docs/screenshots/tool-trace.png)
+
+![Handoff UI](docs/screenshots/handoff-ui.png)
+
+![n8n workflow map](docs/screenshots/n8n-canvas.png)
+
+The n8n image is a map of the committed workflow, not a live n8n editor.
+
 ## Later
 
-Days 22–25 are not built: human handoff UI, n8n webhook bridge, screenshots, and an extended recruiter walkthrough. See [docs/status.md](docs/status.md).
+Days 26–30 are not built: batch intake, a downloadable run export, a handoff audit list, an optional Ollama pass, and a one-page case study. See [docs/status.md](docs/status.md).
 
 ## License
 
