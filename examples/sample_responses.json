@@ -1,0 +1,494 @@
+[
+  {
+    "description": "billing",
+    "http_status": 201,
+    "ticket": {
+      "id": "405e985c-32c4-4ff4-b54f-cc8cf6e0dfe4",
+      "subject": "Duplicate TraceLight invoice",
+      "body": "We were charged twice for the September TraceLight Enterprise invoice. Can you confirm which charge is valid?",
+      "customer_id": "cust-1042",
+      "channel": "email",
+      "intent": "billing",
+      "priority": "medium",
+      "status": "resolved",
+      "created_at": "2026-09-22T15:45:39.394587Z",
+      "updated_at": "2026-09-22T15:45:39.396168Z",
+      "latest_run_id": "005bbe93-7dc1-47a0-a984-1b7a05eac839"
+    },
+    "run": {
+      "id": "005bbe93-7dc1-47a0-a984-1b7a05eac839",
+      "ticket_id": "405e985c-32c4-4ff4-b54f-cc8cf6e0dfe4",
+      "provider": "heuristic",
+      "status": "completed",
+      "plan": [
+        {
+          "round": 1,
+          "actor": "planner",
+          "thought": "Look up Vision AI Ops notes before answering.",
+          "action": "tool",
+          "tool": "lookup_kb"
+        },
+        {
+          "round": 1,
+          "actor": "executor",
+          "thought": "lookup_kb ok=true attempts=1",
+          "action": "tool_result",
+          "tool": "lookup_kb"
+        },
+        {
+          "round": 2,
+          "actor": "planner",
+          "thought": "Load the CRM profile so the reply names the workspace plan.",
+          "action": "tool",
+          "tool": "get_customer"
+        },
+        {
+          "round": 2,
+          "actor": "executor",
+          "thought": "get_customer ok=true attempts=1",
+          "action": "tool_result",
+          "tool": "get_customer"
+        },
+        {
+          "round": 3,
+          "actor": "planner",
+          "thought": "Write intent, priority, and status onto the ticket.",
+          "action": "tool",
+          "tool": "update_ticket"
+        },
+        {
+          "round": 3,
+          "actor": "executor",
+          "thought": "update_ticket ok=true attempts=1",
+          "action": "tool_result",
+          "tool": "update_ticket"
+        },
+        {
+          "round": 4,
+          "actor": "planner",
+          "thought": "Draft the customer reply from the knowledge base and CRM results.",
+          "action": "final",
+          "tool": null
+        }
+      ],
+      "tool_calls": [
+        {
+          "tool": "lookup_kb",
+          "arguments": {
+            "query": "Duplicate TraceLight invoice. We were charged twice for the September TraceLight Enterprise invoice. Can you confirm which charge is valid?"
+          },
+          "ok": true,
+          "attempts": 1,
+          "result": {
+            "articles": [
+              {
+                "id": "kb-billing-invoices",
+                "title": "Billing: duplicate TraceLight invoices",
+                "excerpt": "TraceLight invoices are issued on the first business day of the month. If a workspace shows two charges for the same month, open Billing, compare the charge ids, and keep the invoice number that starts with INV. Duplicate charges are credited within 30 days. AlertMesh Starter does not include invoice credits; Business "
+              },
+              {
+                "id": "kb-password-reset",
+                "title": "Password reset and sign-in help",
+                "excerpt": "From the TraceLight or AlertMesh login page, choose Forgot password. The reset link expires in 30 minutes and only works once. If the reset email never arrives, check spam and confirm the workspace email on file. Lost MFA devices on Business and Enterprise plans can be cleared by a workspace admin under Admin, Members."
+              }
+            ],
+            "match_count": 2
+          },
+          "error": null
+        },
+        {
+          "tool": "get_customer",
+          "arguments": {
+            "customer_id": "cust-1042"
+          },
+          "ok": true,
+          "attempts": 1,
+          "result": {
+            "found": true,
+            "customer_id": "cust-1042",
+            "name": "Lena Ortiz",
+            "company": "Harborline Logistics",
+            "plan": "TraceLight Enterprise",
+            "region": "EU",
+            "vip": false
+          },
+          "error": null
+        },
+        {
+          "tool": "update_ticket",
+          "arguments": {
+            "ticket_id": "405e985c-32c4-4ff4-b54f-cc8cf6e0dfe4",
+            "intent": "billing",
+            "priority": "medium",
+            "status": "resolved"
+          },
+          "ok": true,
+          "attempts": 1,
+          "result": {
+            "ticket_id": "405e985c-32c4-4ff4-b54f-cc8cf6e0dfe4",
+            "intent": "billing",
+            "priority": "medium",
+            "status": "resolved"
+          },
+          "error": null
+        }
+      ],
+      "final_reply": "Hi Lena, I see Harborline Logistics is on TraceLight Enterprise. Here is what our billing notes say. TraceLight invoices are issued on the first business day of the month. If a workspace shows two charges for the same month, open Billing, compare the charge ids, and keep the invoice number that starts with INV. Duplicate charges are credited within 30 days. AlertMesh Starter does not include invoice credits; Business",
+      "ticket_status": "resolved",
+      "intent": "billing",
+      "priority": "medium",
+      "rounds": 4,
+      "fallback": null,
+      "request_id": "1bb98d3d-790d-42a4-9bc8-06443dbc874d",
+      "created_at": "2026-09-22T15:45:39.398214Z"
+    }
+  },
+  {
+    "description": "password_reset",
+    "http_status": 201,
+    "ticket": {
+      "id": "7583516c-f95c-4fde-b549-10687338930d",
+      "subject": "Cannot sign in to AlertMesh",
+      "body": "I forgot my password and the reset email never arrived. Can you help me get back in?",
+      "customer_id": "cust-2088",
+      "channel": "chat",
+      "intent": "password_reset",
+      "priority": "high",
+      "status": "resolved",
+      "created_at": "2026-09-22T15:45:39.406624Z",
+      "updated_at": "2026-09-22T15:45:39.407234Z",
+      "latest_run_id": "f990acee-432c-4b0e-a9dc-40a83b9fd331"
+    },
+    "run": {
+      "id": "f990acee-432c-4b0e-a9dc-40a83b9fd331",
+      "ticket_id": "7583516c-f95c-4fde-b549-10687338930d",
+      "provider": "heuristic",
+      "status": "completed",
+      "plan": [
+        {
+          "round": 1,
+          "actor": "planner",
+          "thought": "Look up Vision AI Ops notes before answering.",
+          "action": "tool",
+          "tool": "lookup_kb"
+        },
+        {
+          "round": 1,
+          "actor": "executor",
+          "thought": "lookup_kb ok=true attempts=1",
+          "action": "tool_result",
+          "tool": "lookup_kb"
+        },
+        {
+          "round": 2,
+          "actor": "planner",
+          "thought": "Load the CRM profile so the reply names the workspace plan.",
+          "action": "tool",
+          "tool": "get_customer"
+        },
+        {
+          "round": 2,
+          "actor": "executor",
+          "thought": "get_customer ok=true attempts=1",
+          "action": "tool_result",
+          "tool": "get_customer"
+        },
+        {
+          "round": 3,
+          "actor": "planner",
+          "thought": "Write intent, priority, and status onto the ticket.",
+          "action": "tool",
+          "tool": "update_ticket"
+        },
+        {
+          "round": 3,
+          "actor": "executor",
+          "thought": "update_ticket ok=true attempts=1",
+          "action": "tool_result",
+          "tool": "update_ticket"
+        },
+        {
+          "round": 4,
+          "actor": "planner",
+          "thought": "Notify the ops channel because this is high priority or needs a human.",
+          "action": "tool",
+          "tool": "notify_slack"
+        },
+        {
+          "round": 4,
+          "actor": "executor",
+          "thought": "notify_slack ok=true attempts=1",
+          "action": "tool_result",
+          "tool": "notify_slack"
+        },
+        {
+          "round": 5,
+          "actor": "planner",
+          "thought": "Draft the customer reply from the knowledge base and CRM results.",
+          "action": "final",
+          "tool": null
+        }
+      ],
+      "tool_calls": [
+        {
+          "tool": "lookup_kb",
+          "arguments": {
+            "query": "Cannot sign in to AlertMesh. I forgot my password and the reset email never arrived. Can you help me get back in?"
+          },
+          "ok": true,
+          "attempts": 1,
+          "result": {
+            "articles": [
+              {
+                "id": "kb-password-reset",
+                "title": "Password reset and sign-in help",
+                "excerpt": "From the TraceLight or AlertMesh login page, choose Forgot password. The reset link expires in 30 minutes and only works once. If the reset email never arrives, check spam and confirm the workspace email on file. Lost MFA devices on Business and Enterprise plans can be cleared by a workspace admin under Admin, Members."
+              },
+              {
+                "id": "kb-billing-invoices",
+                "title": "Billing: duplicate TraceLight invoices",
+                "excerpt": "TraceLight invoices are issued on the first business day of the month. If a workspace shows two charges for the same month, open Billing, compare the charge ids, and keep the invoice number that starts with INV. Duplicate charges are credited within 30 days. AlertMesh Starter does not include invoice credits; Business "
+              }
+            ],
+            "match_count": 2
+          },
+          "error": null
+        },
+        {
+          "tool": "get_customer",
+          "arguments": {
+            "customer_id": "cust-2088"
+          },
+          "ok": true,
+          "attempts": 1,
+          "result": {
+            "found": true,
+            "customer_id": "cust-2088",
+            "name": "Marcus Adeyemi",
+            "company": "Northglass Bakery",
+            "plan": "AlertMesh Starter",
+            "region": "US",
+            "vip": false
+          },
+          "error": null
+        },
+        {
+          "tool": "update_ticket",
+          "arguments": {
+            "ticket_id": "7583516c-f95c-4fde-b549-10687338930d",
+            "intent": "password_reset",
+            "priority": "high",
+            "status": "resolved"
+          },
+          "ok": true,
+          "attempts": 1,
+          "result": {
+            "ticket_id": "7583516c-f95c-4fde-b549-10687338930d",
+            "intent": "password_reset",
+            "priority": "high",
+            "status": "resolved"
+          },
+          "error": null
+        },
+        {
+          "tool": "notify_slack",
+          "arguments": {
+            "channel": "#vision-ops-alerts",
+            "intent": "password_reset",
+            "priority": "high"
+          },
+          "ok": true,
+          "attempts": 1,
+          "result": {
+            "delivered": false,
+            "mode": "logged",
+            "channel": "#vision-ops-alerts"
+          },
+          "error": null
+        }
+      ],
+      "final_reply": "Hi Marcus, I see Northglass Bakery is on AlertMesh Starter. Here is the password reset path from our notes. From the TraceLight or AlertMesh login page, choose Forgot password. The reset link expires in 30 minutes and only works once. If the reset email never arrives, check spam and confirm the workspace email on file. Lost MFA devices on Business and Enterprise plans can be cleared by a workspace admin under Admin, Members.",
+      "ticket_status": "resolved",
+      "intent": "password_reset",
+      "priority": "high",
+      "rounds": 5,
+      "fallback": null,
+      "request_id": "cef787b7-ca5e-4f7d-bcb7-2d047d84475b",
+      "created_at": "2026-09-22T15:45:39.407725Z"
+    }
+  },
+  {
+    "description": "escalation",
+    "http_status": 201,
+    "ticket": {
+      "id": "bead4231-593e-46e5-9d7c-42f1ae1775c7",
+      "subject": "Need a human \u2014 TraceLight workspace is down",
+      "body": "Our whole team is locked out and this looks like an outage. Please escalate to a person on the ops queue.",
+      "customer_id": "cust-3301",
+      "channel": "portal",
+      "intent": "escalation",
+      "priority": "urgent",
+      "status": "escalated",
+      "created_at": "2026-09-22T15:45:39.413474Z",
+      "updated_at": "2026-09-22T15:45:39.414059Z",
+      "latest_run_id": "d3c02cef-24ad-4620-8ab5-67dcf44439a3"
+    },
+    "run": {
+      "id": "d3c02cef-24ad-4620-8ab5-67dcf44439a3",
+      "ticket_id": "bead4231-593e-46e5-9d7c-42f1ae1775c7",
+      "provider": "heuristic",
+      "status": "completed",
+      "plan": [
+        {
+          "round": 1,
+          "actor": "planner",
+          "thought": "Look up Vision AI Ops notes before answering.",
+          "action": "tool",
+          "tool": "lookup_kb"
+        },
+        {
+          "round": 1,
+          "actor": "executor",
+          "thought": "lookup_kb ok=true attempts=1",
+          "action": "tool_result",
+          "tool": "lookup_kb"
+        },
+        {
+          "round": 2,
+          "actor": "planner",
+          "thought": "Load the CRM profile so the reply names the workspace plan.",
+          "action": "tool",
+          "tool": "get_customer"
+        },
+        {
+          "round": 2,
+          "actor": "executor",
+          "thought": "get_customer ok=true attempts=1",
+          "action": "tool_result",
+          "tool": "get_customer"
+        },
+        {
+          "round": 3,
+          "actor": "planner",
+          "thought": "Write intent, priority, and status onto the ticket.",
+          "action": "tool",
+          "tool": "update_ticket"
+        },
+        {
+          "round": 3,
+          "actor": "executor",
+          "thought": "update_ticket ok=true attempts=1",
+          "action": "tool_result",
+          "tool": "update_ticket"
+        },
+        {
+          "round": 4,
+          "actor": "planner",
+          "thought": "Notify the ops channel because this is high priority or needs a human.",
+          "action": "tool",
+          "tool": "notify_slack"
+        },
+        {
+          "round": 4,
+          "actor": "executor",
+          "thought": "notify_slack ok=true attempts=1",
+          "action": "tool_result",
+          "tool": "notify_slack"
+        },
+        {
+          "round": 5,
+          "actor": "planner",
+          "thought": "Draft the customer reply from the knowledge base and CRM results.",
+          "action": "final",
+          "tool": null
+        }
+      ],
+      "tool_calls": [
+        {
+          "tool": "lookup_kb",
+          "arguments": {
+            "query": "Need a human \u2014 TraceLight workspace is down. Our whole team is locked out and this looks like an outage. Please escalate to a person on the ops queue."
+          },
+          "ok": true,
+          "attempts": 1,
+          "result": {
+            "articles": [
+              {
+                "id": "kb-escalate-human",
+                "title": "Escalate to a human on the ops queue",
+                "excerpt": "Escalate a TraceLight or AlertMesh ticket to a human when the customer asks for a person, reports a workspace outage, or mentions legal review. Mark the ticket escalated and notify the ops queue. Do not promise a resolution time. The on-call ops queue follows up with the workspace admin."
+              },
+              {
+                "id": "kb-general-support",
+                "title": "General Vision AI Ops support",
+                "excerpt": "Vision AI Ops support covers TraceLight and AlertMesh how-to questions. Ask which workspace they mean and what they already tried, then wait for their reply before closing the ticket."
+              }
+            ],
+            "match_count": 2
+          },
+          "error": null
+        },
+        {
+          "tool": "get_customer",
+          "arguments": {
+            "customer_id": "cust-3301"
+          },
+          "ok": true,
+          "attempts": 1,
+          "result": {
+            "found": true,
+            "customer_id": "cust-3301",
+            "name": "Priya Shah",
+            "company": "Kite and Co",
+            "plan": "TraceLight Business",
+            "region": "US",
+            "vip": true
+          },
+          "error": null
+        },
+        {
+          "tool": "update_ticket",
+          "arguments": {
+            "ticket_id": "bead4231-593e-46e5-9d7c-42f1ae1775c7",
+            "intent": "escalation",
+            "priority": "urgent",
+            "status": "escalated"
+          },
+          "ok": true,
+          "attempts": 1,
+          "result": {
+            "ticket_id": "bead4231-593e-46e5-9d7c-42f1ae1775c7",
+            "intent": "escalation",
+            "priority": "urgent",
+            "status": "escalated"
+          },
+          "error": null
+        },
+        {
+          "tool": "notify_slack",
+          "arguments": {
+            "channel": "#vision-ops-alerts",
+            "intent": "escalation",
+            "priority": "urgent"
+          },
+          "ok": true,
+          "attempts": 1,
+          "result": {
+            "delivered": false,
+            "mode": "logged",
+            "channel": "#vision-ops-alerts"
+          },
+          "error": null
+        }
+      ],
+      "final_reply": "Hi Priya, I see Kite and Co is on TraceLight Business. This is a VIP workspace contact. I escalated this to the on-call ops queue. Escalate a TraceLight or AlertMesh ticket to a human when the customer asks for a person, reports a workspace outage, or mentions legal review. Mark the ticket escalated and notify the ops queue. Do not promise a resolution time. The on-call ops queue follows up with the workspace admin.",
+      "ticket_status": "escalated",
+      "intent": "escalation",
+      "priority": "urgent",
+      "rounds": 5,
+      "fallback": null,
+      "request_id": "dd6f0ef0-7a3b-470f-b5fb-f370c5bafda8",
+      "created_at": "2026-09-22T15:45:39.414529Z"
+    }
+  }
+]

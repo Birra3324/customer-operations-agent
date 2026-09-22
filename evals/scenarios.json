@@ -1,0 +1,53 @@
+[
+  {
+    "id": "billing-duplicate-invoice",
+    "ticket": {
+      "subject": "Duplicate TraceLight invoice",
+      "body": "We were charged twice for the September TraceLight Enterprise invoice. Can you confirm which charge is valid?",
+      "customer_id": "cust-1042",
+      "channel": "email"
+    },
+    "expect": {
+      "intent": "billing",
+      "priority": "medium",
+      "status": "resolved",
+      "tools": ["lookup_kb", "get_customer", "update_ticket"],
+      "tools_absent": ["notify_slack"],
+      "reply_contains": ["billing notes", "Harborline Logistics"]
+    }
+  },
+  {
+    "id": "password-reset",
+    "ticket": {
+      "subject": "Cannot sign in to AlertMesh",
+      "body": "I forgot my password and the reset email never arrived. Can you help me get back in?",
+      "customer_id": "cust-2088",
+      "channel": "chat"
+    },
+    "expect": {
+      "intent": "password_reset",
+      "priority": "high",
+      "status": "resolved",
+      "tools": ["lookup_kb", "get_customer", "update_ticket", "notify_slack"],
+      "tools_absent": [],
+      "reply_contains": ["password reset", "Northglass Bakery", "30 minutes"]
+    }
+  },
+  {
+    "id": "escalate-to-human",
+    "ticket": {
+      "subject": "Need a human — TraceLight workspace is down",
+      "body": "Our whole team is locked out and this looks like an outage. Please escalate to a person on the ops queue.",
+      "customer_id": "cust-3301",
+      "channel": "portal"
+    },
+    "expect": {
+      "intent": "escalation",
+      "priority": "urgent",
+      "status": "escalated",
+      "tools": ["lookup_kb", "get_customer", "update_ticket", "notify_slack"],
+      "tools_absent": [],
+      "reply_contains": ["ops queue", "Kite and Co", "VIP workspace"]
+    }
+  }
+]

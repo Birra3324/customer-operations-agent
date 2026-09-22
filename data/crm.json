@@ -1,0 +1,31 @@
+{
+  "customers": [
+    {
+      "customer_id": "cust-1042",
+      "name": "Lena Ortiz",
+      "company": "Harborline Logistics",
+      "plan": "TraceLight Enterprise",
+      "email": "lena.ortiz@harborline.example",
+      "region": "EU",
+      "vip": false
+    },
+    {
+      "customer_id": "cust-2088",
+      "name": "Marcus Adeyemi",
+      "company": "Northglass Bakery",
+      "plan": "AlertMesh Starter",
+      "email": "marcus@northglass.example",
+      "region": "US",
+      "vip": false
+    },
+    {
+      "customer_id": "cust-3301",
+      "name": "Priya Shah",
+      "company": "Kite and Co",
+      "plan": "TraceLight Business",
+      "email": "priya.shah@kite.example",
+      "region": "US",
+      "vip": true
+    }
+  ]
+}

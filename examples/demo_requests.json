@@ -1,0 +1,20 @@
+[
+  {
+    "subject": "Duplicate TraceLight invoice",
+    "body": "We were charged twice for the September TraceLight Enterprise invoice. Can you confirm which charge is valid?",
+    "customer_id": "cust-1042",
+    "channel": "email"
+  },
+  {
+    "subject": "Cannot sign in to AlertMesh",
+    "body": "I forgot my password and the reset email never arrived. Can you help me get back in?",
+    "customer_id": "cust-2088",
+    "channel": "chat"
+  },
+  {
+    "subject": "Need a human — TraceLight workspace is down",
+    "body": "Our whole team is locked out and this looks like an outage. Please escalate to a person on the ops queue.",
+    "customer_id": "cust-3301",
+    "channel": "portal"
+  }
+]
