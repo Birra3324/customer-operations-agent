@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/Birra3324/customer-operations-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/Birra3324/customer-operations-agent/actions/workflows/ci.yml)
 
-> Open to remote AI automation roles. Email: birragimedi@gmail.com | GitHub: @Birra3324 | LinkedIn: linkedin.com/in/birra-gemedi
+> Open to remote AI automation roles. Email: birragemedi@gmail.com | GitHub: @Birra3324 | LinkedIn: linkedin.com/in/birra-gemedi-813337199/
 
 FastAPI service that turns a support ticket into a structured agent run: a planner chooses the next step, an executor calls allowlisted mock tools, and SQLite stores the plan, tool trace, reply, and ticket status.
 
