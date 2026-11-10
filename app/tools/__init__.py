@@ -61,7 +61,7 @@ class UpdateTicketArgs(BaseModel):
 
 class NotifySlackArgs(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    channel: str = "#vision-ops-alerts"
+    channel: str = "#northwind-alerts"
     intent: Intent
     priority: Priority
 
@@ -196,7 +196,7 @@ def update_ticket(ctx: ToolContext, args: UpdateTicketArgs) -> dict:
 
 def notify_slack(ctx: ToolContext, args: NotifySlackArgs) -> dict:
     """Post a metadata-only line, or log when SLACK_WEBHOOK_URL is unset."""
-    allowed = (get_settings().slack_channel or "#vision-ops-alerts").strip()
+    allowed = (get_settings().slack_channel or "#northwind-alerts").strip()
     if args.channel != allowed:
         raise ToolError("channel_not_allowed")
     # Planner-supplied prose is ignored. The payload is ticket metadata only.

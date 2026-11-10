@@ -1,11 +1,11 @@
 {
-  "name": "Vision AI Ops ticket bridge",
+  "name": "Northwind Systems ticket bridge",
   "active": false,
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "vision-ops-ticket",
+        "path": "northwind-ticket",
         "responseMode": "lastNode",
         "options": {}
       },
@@ -14,7 +14,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [260, 300],
-      "webhookId": "vision-ops-ticket"
+      "webhookId": "northwind-ticket"
     },
     {
       "parameters": {
@@ -31,7 +31,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ event: 'ticket.created', subject: $json.body.subject, body: $json.body.body, customer_id: $json.body.customer_id, channel: $json.body.channel || 'portal', external_id: String($execution.id), workflow: 'vision-ops-ticket-bridge' }) }}",
+        "jsonBody": "={{ JSON.stringify({ event: 'ticket.created', subject: $json.body.subject, body: $json.body.body, customer_id: $json.body.customer_id, channel: $json.body.channel || 'portal', external_id: String($execution.id), workflow: 'ticket-bridge' }) }}",
         "options": {}
       },
       "id": "b7e4d1aa-91c0-4f55-8a66-2c3d4e5f6071",

@@ -123,7 +123,7 @@ Body the n8n workflow sends after its webhook. HTTP 201, or HTTP 200 when `exter
   "customer_id": "cust-3301",
   "channel": "portal",
   "external_id": "demo-n8n-kite-outage",
-  "workflow": "vision-ops-ticket-bridge"
+  "workflow": "ticket-bridge"
 }
 ```
 
@@ -134,7 +134,7 @@ Body the n8n workflow sends after its webhook. HTTP 201, or HTTP 200 when `exter
 ```json
 {
   "ticket_id": "TICKET_ID",
-  "workflow": "vision-ops-ticket-bridge",
+  "workflow": "ticket-bridge",
   "status": "posted",
   "external_id": "demo-n8n-kite-outage",
   "note": "n8n bridge posted agent status"

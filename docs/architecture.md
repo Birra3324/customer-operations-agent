@@ -69,7 +69,7 @@ Guardrails:
 - **Arguments.** Each tool has a Pydantic model with `extra=forbid`. Unknown fields such as a URL on `lookup_kb` return `invalid_arguments` and the tool body does not run.
 - **Max rounds.** `MAX_TOOL_ROUNDS` (default 6). Hitting the cap stores `status=needs_review` and does not keep calling tools.
 - **No open network.** Knowledge and CRM reads are local files. Ticket writes are SQLite. The only HTTP client in the tool layer is the Slack webhook, and only when `SLACK_WEBHOOK_URL` is set. The message body is built inside the tool; planner-supplied prose is not posted.
-- **Channel.** `notify_slack` accepts only `SLACK_CHANNEL` (default `#vision-ops-alerts`).
+- **Channel.** `notify_slack` accepts only `SLACK_CHANNEL` (default `#northwind-alerts`).
 
 ## Retry and backoff
 
@@ -113,7 +113,7 @@ SQLite files created before these columns exist get `assignee`, `handoff_note`, 
 
 ## n8n bridge
 
-The workflow in `n8n/vision-ops-ticket-bridge.json` is inactive until someone turns it on. Webhook, then `POST /api/v1/integrations/n8n/inbound`, then `POST /api/v1/integrations/n8n/status`.
+The workflow in `n8n/ticket-bridge.json` is inactive until someone turns it on. Webhook, then `POST /api/v1/integrations/n8n/inbound`, then `POST /api/v1/integrations/n8n/status`.
 
 Inbound uses the same `add_ticket` and `run_agent` path as `POST /api/v1/tickets`. When `external_id` is set, a `dedupe_key` of `n8n:ticket.created:{external_id}` makes a second delivery return the original run. Status events are extra rows on `integration_events` and do not change the ticket. The API key stays in the n8n environment (`OPS_AGENT_API_KEY`), which this process does not read.
 

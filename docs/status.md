@@ -19,7 +19,7 @@ This is not a UiPath, Workato, MuleSoft, or ServiceNow project. The stack is Fas
 - [x] Package layout: `app/`, `tests/`, `docs/`, `examples/`, `evals/`, `scripts/`, `.github/workflows/ci.yml`
 - [x] `.env.example`, Dockerfile, docker compose (API + SQLite volume), MIT license, `.gitignore`
 - [x] README with a clone-and-run path, architecture diagram, and contact line
-- [x] Fictional Vision AI Ops tickets only
+- [x] Fictional Northwind Systems (northwind.example) tickets only
 
 ### Day 20 — tools and policy
 
@@ -68,7 +68,7 @@ This is not a UiPath, Workato, MuleSoft, or ServiceNow project. The stack is Fas
 
 ### Day 23 — n8n bridge
 
-- [x] Importable workflow [n8n/vision-ops-ticket-bridge.json](../n8n/vision-ops-ticket-bridge.json): webhook, call the agent, post status
+- [x] Importable workflow [n8n/ticket-bridge.json](../n8n/ticket-bridge.json): webhook, call the agent, post status
 - [x] `POST /api/v1/integrations/n8n/inbound` creates a ticket and runs the heuristic planner
 - [x] The same `external_id` returns the original ticket and run (`idempotent: true`)
 - [x] `POST /api/v1/integrations/n8n/status` records `posted`, `failed`, or `skipped` and does not rewrite ticket status
@@ -100,7 +100,7 @@ This is not a UiPath, Workato, MuleSoft, or ServiceNow project. The stack is Fas
 
 Constraints that stay true for the whole track:
 
-- Fictional Vision AI Ops data only
+- Fictional Northwind Systems (northwind.example) data only
 - No real API keys, Slack tokens, or customer traces in git
 - No UiPath / Workato / MuleSoft / ServiceNow claims
 - Default path works offline

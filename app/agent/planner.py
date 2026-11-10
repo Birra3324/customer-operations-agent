@@ -53,7 +53,7 @@ class HeuristicPlanner:
         if not _seen(history, "lookup_kb"):
             query = f"{ticket.subject}. {ticket.body}"[:500]
             return Decision(
-                thought="Look up Vision AI Ops notes before answering.",
+                thought="Look up Northwind Systems (northwind.example) notes before answering.",
                 action="tool",
                 tool="lookup_kb",
                 arguments={"query": query},
@@ -83,7 +83,7 @@ class HeuristicPlanner:
                 action="tool",
                 tool="notify_slack",
                 arguments={
-                    "channel": get_settings().slack_channel or "#vision-ops-alerts",
+                    "channel": get_settings().slack_channel or "#northwind-alerts",
                     "intent": classification.intent,
                     "priority": classification.priority,
                 },
@@ -144,7 +144,7 @@ class LlmPlanner:
 def _messages(ticket: Ticket, history: list[dict]) -> list[dict[str, str]]:
     tool_list = "lookup_kb, get_customer, create_ticket, update_ticket, notify_slack"
     system = (
-        "You are the planner for a Vision AI Ops customer operations agent. "
+        "You are the planner for a Northwind Systems (northwind.example) customer operations agent. "
         "Reply with ONLY JSON: "
         '{"thought":"short","action":"tool"|"final","tool":"name or null",'
         '"arguments":{},"final_reply":"string or null"}. '
@@ -156,7 +156,7 @@ def _messages(ticket: Ticket, history: list[dict]) -> list[dict[str, str]]:
         "priority is low|medium|high|urgent, "
         "status is open|in_progress|waiting_customer|resolved|escalated. "
         "notify_slack arguments: {channel, intent, priority} and channel must be "
-        "#vision-ops-alerts. Use tools before the final reply."
+        "#northwind-alerts. Use tools before the final reply."
     )
     summary = [
         {

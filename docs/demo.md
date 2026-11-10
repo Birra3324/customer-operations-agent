@@ -128,7 +128,7 @@ Queues are the three fictional names `ops-queue`, `billing-desk`, and `access-de
 
 ## 7. n8n bridge (~3 min)
 
-You do not need n8n installed to show the path. The importable workflow is [n8n/vision-ops-ticket-bridge.json](../n8n/vision-ops-ticket-bridge.json). The HTTP nodes call this API and read `OPS_AGENT_URL` and `OPS_AGENT_API_KEY` from the n8n environment. The key is not in the JSON. Full notes: [n8n.md](n8n.md).
+You do not need n8n installed to show the path. The importable workflow is [n8n/ticket-bridge.json](../n8n/ticket-bridge.json). The HTTP nodes call this API and read `OPS_AGENT_URL` and `OPS_AGENT_API_KEY` from the n8n environment. The key is not in the JSON. Full notes: [n8n.md](n8n.md).
 
 ```bash
 API_KEY="$API_KEY" python scripts/post_n8n_demo.py
@@ -140,10 +140,10 @@ Talking points:
 
 - HTTP 201 the first time, with `idempotent: false`, intent `escalation`, and a tool trace.
 - Run the script again. HTTP 200, `idempotent: true`, same ticket id and same run id. `external_id` is `demo-n8n-kite-outage`.
-- Reload the handoff page. The ticket detail includes an n8n line: `vision-ops-ticket-bridge · status.posted`.
+- Reload the handoff page. The ticket detail includes an n8n line: `ticket-bridge · status.posted`.
 - `GET /api/v1/integrations/n8n/events` lists those rows. The status callback does not overwrite the ticket status.
 
-[screenshots/n8n-canvas.png](screenshots/n8n-canvas.png) is a map of the three nodes (receive, call the agent, post status). It is not a live n8n editor. If n8n is installed, import the JSON, set the two environment variables on the n8n process, activate the workflow, and POST the subject/body from `examples/n8n_inbound.json` to the webhook path `vision-ops-ticket`. Leave the API key out of the file.
+[screenshots/n8n-canvas.png](screenshots/n8n-canvas.png) is a map of the three nodes (receive, call the agent, post status). It is not a live n8n editor. If n8n is installed, import the JSON, set the two environment variables on the n8n process, activate the workflow, and POST the subject/body from `examples/n8n_inbound.json` to the webhook path `northwind-ticket`. Leave the API key out of the file.
 
 ## 8. Optional: show the retry (~1 min)
 

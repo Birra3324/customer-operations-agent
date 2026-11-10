@@ -176,7 +176,7 @@ class N8nInbound(BaseModel):
     customer_id: str | None = Field(default=None, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
     channel: Channel = "portal"
     external_id: str | None = Field(default=None, max_length=128, pattern=r"^[A-Za-z0-9_.:-]+$")
-    workflow: str = Field(default="vision-ops-ticket-bridge", max_length=80, pattern=r"^[A-Za-z0-9_.:-]+$")
+    workflow: str = Field(default="ticket-bridge", max_length=80, pattern=r"^[A-Za-z0-9_.:-]+$")
 
 
 class N8nInboundOut(BaseModel):
@@ -191,7 +191,7 @@ class N8nInboundOut(BaseModel):
 
 class N8nStatusIn(BaseModel):
     ticket_id: str = Field(min_length=1, max_length=36)
-    workflow: str = Field(default="vision-ops-ticket-bridge", max_length=80, pattern=r"^[A-Za-z0-9_.:-]+$")
+    workflow: str = Field(default="ticket-bridge", max_length=80, pattern=r"^[A-Za-z0-9_.:-]+$")
     status: N8nBridgeStatus
     external_id: str | None = Field(default=None, max_length=128, pattern=r"^[A-Za-z0-9_.:-]+$")
     note: str | None = Field(default=None, max_length=300)

@@ -27,7 +27,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs" / "screenshots"
-WORKFLOW = ROOT / "n8n" / "vision-ops-ticket-bridge.json"
+WORKFLOW = ROOT / "n8n" / "ticket-bridge.json"
 DEMOS = ROOT / "examples" / "demo_requests.json"
 
 
@@ -93,7 +93,7 @@ def _canvas(workflow: dict) -> str:
   .arrow:after {{ content: ""; position: absolute; right: -1px; top: -4px; border: 5px solid transparent; border-left-color: #0e5f57; }}
 </style></head>
 <body><main>
-  <h1>Workflow map — n8n/vision-ops-ticket-bridge.json</h1>
+  <h1>Workflow map — n8n/ticket-bridge.json</h1>
   <p>Not a live n8n editor. Import the JSON to open this graph in n8n. The HTTP nodes read OPS_AGENT_URL and OPS_AGENT_API_KEY from the n8n environment.</p>
   <div class="canvas">{inner}</div>
 </main></body></html>"""

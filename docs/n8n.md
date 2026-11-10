@@ -1,10 +1,10 @@
 # n8n webhook bridge
 
-The file [n8n/vision-ops-ticket-bridge.json](../n8n/vision-ops-ticket-bridge.json) is an n8n 1.x workflow you import. It is not a running n8n server, and this repo does not claim a Workato, MuleSoft, or ServiceNow integration.
+The file [n8n/ticket-bridge.json](../n8n/ticket-bridge.json) is an n8n 1.x workflow you import. It is not a running n8n server, and this repo does not claim a Workato, MuleSoft, or ServiceNow integration.
 
 The workflow does three things:
 
-1. **Receive ticket event** — webhook `POST /webhook/vision-ops-ticket`
+1. **Receive ticket event** — webhook `POST /webhook/northwind-ticket`
 2. **Call agent API** — `POST /api/v1/integrations/n8n/inbound` on this service
 3. **Post status** — `POST /api/v1/integrations/n8n/status` with the ticket id the agent returned
 
@@ -62,7 +62,7 @@ Then post status (the script does this for you):
 curl -sS -X POST http://127.0.0.1:8789/api/v1/integrations/n8n/status \
   -H "content-type: application/json" \
   -H "X-API-Key: $API_KEY" \
-  -d '{"ticket_id":"TICKET_ID","workflow":"vision-ops-ticket-bridge","status":"posted","external_id":"demo-n8n-kite-outage","note":"n8n bridge posted agent status"}'
+  -d '{"ticket_id":"TICKET_ID","workflow":"ticket-bridge","status":"posted","external_id":"demo-n8n-kite-outage","note":"n8n bridge posted agent status"}'
 ```
 
 `status` on that callback is `posted`, `failed`, or `skipped`. It records a row. It does not change the ticket status the agent already wrote. Open [http://127.0.0.1:8789/handoff](http://127.0.0.1:8789/handoff) and the ticket detail lists the n8n line.

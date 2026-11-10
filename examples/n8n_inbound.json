@@ -5,5 +5,5 @@
   "customer_id": "cust-3301",
   "channel": "portal",
   "external_id": "demo-n8n-kite-outage",
-  "workflow": "vision-ops-ticket-bridge"
+  "workflow": "ticket-bridge"
 }

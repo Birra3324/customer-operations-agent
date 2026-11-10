@@ -2,13 +2,13 @@
 
 [![CI](https://github.com/Birra3324/customer-operations-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/Birra3324/customer-operations-agent/actions/workflows/ci.yml)
 
-> Open to remote AI automation roles. Email: birragemedi@gmail.com | GitHub: @Birra3324 | LinkedIn: linkedin.com/in/birra-gemedi-813337199/
+> Open to remote AI automation roles. Email: birragemedi@gmail.com | GitHub: @Birra3324 | LinkedIn: https://www.linkedin.com/in/birra-gemedi-813337199/
 
 FastAPI service that turns a support ticket into a structured agent run: a planner chooses the next step, an executor calls allowlisted mock tools, and SQLite stores the plan, tool trace, reply, and ticket status.
 
 Built as a local portfolio demo. The default planner is a deterministic heuristic, so clone, pytest, and the walkthrough need no GPU, no Ollama, and no paid API key. Ollama or OpenAI are optional via environment variables. Source: [github.com/Birra3324/customer-operations-agent](https://github.com/Birra3324/customer-operations-agent) (no hosted demo URL).
 
-Sample tickets are fictional **Vision AI Ops** requests (TraceLight / AlertMesh), the same made-up company as the company RAG demo. There is no real customer data in git.
+Sample tickets are fictional **Northwind Systems** (northwind.example) requests (TraceLight / AlertMesh), the same made-up company as the company RAG demo. There is no real customer data in git.
 
 **How to demo:** [10–15 minute walkthrough](docs/demo.md) — venv, uvicorn on `:8789`, post the three [example tickets](examples/demo_requests.json), open the [handoff page](http://127.0.0.1:8789/handoff), then the [n8n bridge](docs/n8n.md). Screenshots: [docs/screenshots](docs/screenshots/).
 
@@ -138,7 +138,7 @@ The run record includes `plan` (planner and executor steps), `tool_calls`, `fina
 
 | Tool | What it does |
 | --- | --- |
-| `lookup_kb` | Searches `data/kb.json` (fictional Vision AI Ops articles). |
+| `lookup_kb` | Searches `data/kb.json` (fictional Northwind Systems articles for northwind.example). |
 | `get_customer` | Reads `data/crm.json`. Email stays in the file and is not returned. |
 | `create_ticket` | Inserts a ticket row. The HTTP create path opens the row first; the tool is for agent-driven creates. |
 | `update_ticket` | Sets intent, priority, and status on the current ticket only. |
@@ -185,7 +185,7 @@ Expectations for those three are in [evals/scenarios.json](evals/scenarios.json)
 
 With the API running, open [http://127.0.0.1:8789/handoff](http://127.0.0.1:8789/handoff), paste `API_KEY`, and load the queue. You can escalate, assign `ops-queue`, `billing-desk`, or `access-desk`, or mark a ticket resolved. That does not call the planner again.
 
-The n8n workflow is [n8n/vision-ops-ticket-bridge.json](n8n/vision-ops-ticket-bridge.json). Import notes and the no-n8n curl path are in [docs/n8n.md](docs/n8n.md).
+The n8n workflow is [n8n/ticket-bridge.json](n8n/ticket-bridge.json). Import notes and the no-n8n curl path are in [docs/n8n.md](docs/n8n.md).
 
 ```bash
 API_KEY="$API_KEY" python scripts/post_n8n_demo.py
