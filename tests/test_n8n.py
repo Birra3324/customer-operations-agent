@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 
 CRM_EMAIL = "priya.shah@kite.example"
-WORKFLOW = Path("n8n/vision-ops-ticket-bridge.json")
+WORKFLOW = Path("n8n/ticket-bridge.json")
 INBOUND = Path("examples/n8n_inbound.json")
 
 
@@ -19,7 +19,7 @@ def test_inbound_runs_agent_and_status_round_trip(client, auth_headers, caplog):
     body = created.json()
     assert body["accepted"] is True
     assert body["idempotent"] is False
-    assert body["workflow"] == "vision-ops-ticket-bridge"
+    assert body["workflow"] == "ticket-bridge"
     assert body["external_id"] == payload["external_id"]
     assert body["run"]["intent"] == "escalation"
     assert body["run"]["ticket_status"] == "escalated"

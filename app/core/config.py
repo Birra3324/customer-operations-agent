@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     ai_max_retries: int = 3
 
     slack_webhook_url: str = ""
-    slack_channel: str = "#vision-ops-alerts"
+    slack_channel: str = "#northwind-alerts"
 
     max_tool_rounds: int = Field(default=6, ge=1, le=12)
     tool_max_attempts: int = Field(default=3, ge=1, le=5)

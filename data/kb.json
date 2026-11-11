@@ -20,9 +20,9 @@
     },
     {
       "id": "kb-general-support",
-      "title": "General Vision AI Ops support",
+      "title": "General Northwind Systems support",
       "tags": ["support", "tracelight", "alertmesh"],
-      "body": "Vision AI Ops support covers TraceLight and AlertMesh how-to questions. Ask which workspace they mean and what they already tried, then wait for their reply before closing the ticket."
+      "body": "Northwind Systems (northwind.example) support covers TraceLight and AlertMesh how-to questions. Ask which workspace they mean and what they already tried, then wait for their reply before closing the ticket."
     }
   ]
 }

@@ -24,7 +24,7 @@
         {
           "round": 1,
           "actor": "planner",
-          "thought": "Look up Vision AI Ops notes before answering.",
+          "thought": "Look up Northwind Systems (northwind.example) notes before answering.",
           "action": "tool",
           "tool": "lookup_kb"
         },
@@ -168,7 +168,7 @@
         {
           "round": 1,
           "actor": "planner",
-          "thought": "Look up Vision AI Ops notes before answering.",
+          "thought": "Look up Northwind Systems (northwind.example) notes before answering.",
           "action": "tool",
           "tool": "lookup_kb"
         },
@@ -293,7 +293,7 @@
         {
           "tool": "notify_slack",
           "arguments": {
-            "channel": "#vision-ops-alerts",
+            "channel": "#northwind-alerts",
             "intent": "password_reset",
             "priority": "high"
           },
@@ -302,7 +302,7 @@
           "result": {
             "delivered": false,
             "mode": "logged",
-            "channel": "#vision-ops-alerts"
+            "channel": "#northwind-alerts"
           },
           "error": null
         }
@@ -342,7 +342,7 @@
         {
           "round": 1,
           "actor": "planner",
-          "thought": "Look up Vision AI Ops notes before answering.",
+          "thought": "Look up Northwind Systems (northwind.example) notes before answering.",
           "action": "tool",
           "tool": "lookup_kb"
         },
@@ -420,8 +420,8 @@
               },
               {
                 "id": "kb-general-support",
-                "title": "General Vision AI Ops support",
-                "excerpt": "Vision AI Ops support covers TraceLight and AlertMesh how-to questions. Ask which workspace they mean and what they already tried, then wait for their reply before closing the ticket."
+                "title": "General Northwind Systems support",
+                "excerpt": "Northwind Systems (northwind.example) support covers TraceLight and AlertMesh how-to questions. Ask which workspace they mean and what they already tried, then wait for their reply before closing the ticket."
               }
             ],
             "match_count": 2
@@ -467,7 +467,7 @@
         {
           "tool": "notify_slack",
           "arguments": {
-            "channel": "#vision-ops-alerts",
+            "channel": "#northwind-alerts",
             "intent": "escalation",
             "priority": "urgent"
           },
@@ -476,7 +476,7 @@
           "result": {
             "delivered": false,
             "mode": "logged",
-            "channel": "#vision-ops-alerts"
+            "channel": "#northwind-alerts"
           },
           "error": null
         }
